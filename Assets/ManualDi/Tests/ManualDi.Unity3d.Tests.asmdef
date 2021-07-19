@@ -1,0 +1,20 @@
+{
+    "name": "ManualDi.Unity3d.Tests",
+    "rootNamespace": "ManualDi.Unity3d.Tests",
+    "references": [
+        "GUID:79e81f1ec2b90f34aa39713afe24f508",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:531a3c1ff898f374aa215319c38df738"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
