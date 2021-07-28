@@ -2,8 +2,7 @@
 
 using UnityEngine;
 
-
-namespace Odyssey.Game.Simulation
+namespace ManualDi.Unity3d
 {
     public abstract class MonoBehaviourInstaller : MonoBehaviour, IInstaller
     {
