@@ -1,10 +1,8 @@
-
-using ManualDi.Main;
+﻿using ManualDi.Main;
 
 using UnityEngine;
 
-
-namespace Odyssey.Game.Simulation
+namespace ManualDi.Unity3d
 {
     public abstract class ScriptableObjectInstaller : ScriptableObject, IInstaller
     {

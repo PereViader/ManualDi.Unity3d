@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Odyssey.Game.Simulation
+namespace ManualDi.Unity3d
 {
     public static class TypeBindingGameObjectExtensions
     {
