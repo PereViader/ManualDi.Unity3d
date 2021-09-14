@@ -1,39 +1,51 @@
-﻿using ManualDi.Main;
-
+﻿
+using ManualDi.Main;
 using UnityEngine;
 
 namespace ManualDi.Unity3d
 {
     public static class TypeBindingGameObjectExtensions
     {
-        public static ITypeBinding<T> FromComponentInChildren<T>(this ITypeBinding<T> typeBinding, GameObject gameObject)
-            where T : Component
+        public static ITypeBinding<TInterface> FromComponentInChildren<TInterface, TConcrete>(
+            this ITypeBinding<TInterface, TConcrete> typeBinding,
+            GameObject gameObject
+            )
+            where TConcrete : Component, TInterface
         {
-            typeBinding.FromMethod(b => gameObject.GetComponentInChildren<T>());
+            typeBinding.FromMethod(c => gameObject.GetComponentInChildren<TConcrete>());
 
             return typeBinding;
         }
 
-        public static ITypeBinding<T[]> FromComponentsInChildren<T>(this ITypeBinding<T[]> typeBinding, GameObject gameObject)
-            where T : Component
+        public static ITypeBinding<TInterface[], TConcrete[]> FromComponentsInChildren<TInterface, TConcrete>(
+            this ITypeBinding<TInterface[], TConcrete[]> typeBinding,
+            GameObject gameObject
+            )
+            where TConcrete : Component, TInterface
         {
-            typeBinding.FromMethod(b => gameObject.GetComponentsInChildren<T>());
+            typeBinding.FromMethod(c => gameObject.GetComponentsInChildren<TConcrete>());
 
             return typeBinding;
         }
 
-        public static ITypeBinding<T> FromComponent<T>(this ITypeBinding<T> typeBinding, GameObject gameObject)
-            where T : Component
+        public static ITypeBinding<TInterface, TConcrete> FromComponent<TInterface, TConcrete>(
+            this ITypeBinding<TInterface, TConcrete> typeBinding,
+            GameObject gameObject
+            )
+            where TConcrete : Component, TInterface
         {
-            typeBinding.FromMethod(b => gameObject.GetComponent<T>());
+            typeBinding.FromMethod(b => gameObject.GetComponent<TConcrete>());
 
             return typeBinding;
         }
 
-        public static ITypeBinding<T[]> FromComponents<T>(this ITypeBinding<T[]> typeBinding, GameObject gameObject)
-            where T : Component
+        public static ITypeBinding<TInterface[], TConcrete[]> FromComponents<TInterface, TConcrete>(
+            this ITypeBinding<TInterface[],
+                TConcrete[]> typeBinding, GameObject gameObject
+            )
+            where TConcrete : Component, TInterface
         {
-            typeBinding.FromMethod(b => gameObject.GetComponents<T>());
+            typeBinding.FromMethod(b => gameObject.GetComponents<TConcrete>());
 
             return typeBinding;
         }
