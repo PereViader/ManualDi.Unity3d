@@ -14,7 +14,7 @@ namespace ManualDi.Unity3d.Tests.PlayMode
             var prefabInstaller = TestGameObjectUtils.CreateTestGameObjectInstaller();
 
             var instance = new object();
-            prefabInstaller.Add(c => c.Bind<object>(b => b.FromInstance(instance)));
+            prefabInstaller.Add(c => c.Bind<object>().FromInstance(instance));
 
             Transform parent = new GameObject().transform;
 
