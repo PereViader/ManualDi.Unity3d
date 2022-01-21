@@ -20,7 +20,12 @@ namespace ManualDi.Unity3d.Tests.PlayMode
 
             Assert.That(parent.transform.childCount, Is.EqualTo(0));
 
-            IDiContainer container = new ContainerStarter().WithGameObjectPrefabInstaller(prefabInstaller, parentTransform: parent).Start();
+            IDiContainer container = new DiContainerBuilder()
+                .WithGameObjectPrefabInstaller(
+                    prefabInstaller,
+                    parentTransform: parent
+                    )
+                .Build();
 
             Assert.That(parent.childCount, Is.EqualTo(1));
             Assert.That(container.Resolve<object>(), Is.EqualTo(instance));

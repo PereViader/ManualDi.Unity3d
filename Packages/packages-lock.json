@@ -89,6 +89,13 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "me.pereviader.manualdi.main": {
+      "version": "https://github.com/PereViader/ManualDi.Main.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "834f39f8533b1518604ea609fa2e32b1d08a1eb2"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

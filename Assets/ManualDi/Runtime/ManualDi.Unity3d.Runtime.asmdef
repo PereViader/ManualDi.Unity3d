@@ -1,14 +1,14 @@
 {
     "name": "ManualDi.Unity3d.Runtime",
     "rootNamespace": "ManualDi.Unity3d",
-    "references": [],
+    "references": [
+        "GUID:2831785f1fa04efeb10b7d72b2e32628"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
-    "precompiledReferences": [
-        "ManualDi.Main.dll"
-    ],
+    "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],

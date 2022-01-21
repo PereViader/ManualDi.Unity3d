@@ -9,7 +9,7 @@ namespace ManualDi.Unity3d.Tests
 {
     public class TestMonoBehaviourInstallerStore : ScriptableObject
     {
-        public List<Action<IDiContainer>> installActions = new List<Action<IDiContainer>>();
+        public List<InstallDelegate> installActions = new List<InstallDelegate>();
     }
 }
 

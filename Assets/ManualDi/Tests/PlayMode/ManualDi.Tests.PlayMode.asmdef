@@ -4,15 +4,15 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "ManualDi.Unity3d.Runtime"
+        "ManualDi.Unity3d.Runtime",
+        "ManualDi.Main"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "ManualDi.Main.dll"
+        "nunit.framework.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

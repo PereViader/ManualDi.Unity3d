@@ -29,22 +29,22 @@ namespace ManualDi.Unity3d.Tests
             }
         }
 
-        public override void Install(IDiContainer container)
+        public override void Install(IDiContainerBindings bindings)
         {
             foreach (var installAction in testMonoBehaviourInstallerStore.installActions)
             {
-                installAction.Invoke(container);
+                installAction.Invoke(bindings);
             }
         }
 
-        public void Add(Action<IDiContainer> action)
+        public void Add(InstallDelegate installDelegate)
         {
-            testMonoBehaviourInstallerStore.installActions.Add(action);
+            testMonoBehaviourInstallerStore.installActions.Add(installDelegate);
         }
 
-        public void Add(IEnumerable<Action<IDiContainer>> actions)
+        public void Add(IEnumerable<InstallDelegate> installDelegates)
         {
-            testMonoBehaviourInstallerStore.installActions.AddRange(actions);
+            testMonoBehaviourInstallerStore.installActions.AddRange(installDelegates);
         }
 
         public void Add(IInstaller installer)
@@ -54,7 +54,8 @@ namespace ManualDi.Unity3d.Tests
 
         public void Add(IEnumerable<IInstaller> installers)
         {
-            Add(installers.Select<IInstaller, Action<IDiContainer>>(x => x.Install));
+            var installDelegates = installers.Select<IInstaller, InstallDelegate>(x => x.Install);
+            Add(installDelegates);
         }
     }
 }
