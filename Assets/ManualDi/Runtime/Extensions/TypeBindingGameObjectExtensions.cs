@@ -40,6 +40,17 @@ namespace ManualDi.Unity3d
             return typeBinding;
         }
 
+        public static ITypeBinding<TInterface, TConcrete> FromNewComponent<TInterface, TConcrete>(
+            this ITypeBinding<TInterface, TConcrete> typeBinding,
+            GameObject gameObject
+            )
+            where TConcrete : Component, TInterface
+        {
+            typeBinding.FromMethod(b => gameObject.AddComponent<TConcrete>());
+
+            return typeBinding;
+        }
+
         public static ITypeBinding<TInterface[], TConcrete[]> FromComponents<TInterface, TConcrete>(
             this ITypeBinding<TInterface[],
                 TConcrete[]> typeBinding, GameObject gameObject

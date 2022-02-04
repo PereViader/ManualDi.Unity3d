@@ -8,33 +8,36 @@ namespace ManualDi.Unity3d.Tests.PlayMode
 {
     public class TestContainerStarterGameObjectPrefabExtensions
     {
-        [UnityTest]
-        public IEnumerator TestGameObjectPrefabInstallation()
+        [Test]
+        public void InstantiateAndBind_PrefabContext_CreatesFacadeWithTheBindingsAndData()
         {
-            var prefabInstaller = TestGameObjectUtils.CreateTestGameObjectInstaller();
-
             var instance = new object();
-            prefabInstaller.Add(c => c.Bind<object>().FromInstance(instance));
 
-            Transform parent = new GameObject().transform;
+            var data = new TestData();
+            var facade = UnityManualDiTest.Instantiate(data, b =>
+            {
+                b.Bind<object>().FromInstance(instance);
+            });
 
-            Assert.That(parent.transform.childCount, Is.EqualTo(0));
+            Assert.That(facade.TestData, Is.EqualTo(data));
+            Assert.That(facade.DiContainer.Resolve<object>(), Is.EqualTo(instance));
+        }
 
-            IDiContainer container = new DiContainerBuilder()
-                .WithGameObjectPrefabInstaller(
-                    prefabInstaller,
-                    parentTransform: parent
-                    )
-                .Build();
+        [UnityTest]
+        public IEnumerator Destroy_ContextInstance_DisposesContainer()
+        {
+            bool disposed = false;
 
-            Assert.That(parent.childCount, Is.EqualTo(1));
-            Assert.That(container.Resolve<object>(), Is.EqualTo(instance));
+            var facade = UnityManualDiTest.Instantiate(installDelegate: b =>
+            {
+                b.QueueDispose(() => disposed = true);
+            });
 
-            container.Dispose();
+            GameObject.Destroy(facade.gameObject);
 
             yield return null;
 
-            Assert.That(parent.childCount, Is.EqualTo(0));
+            Assert.That(disposed, Is.True);
         }
     }
 }
