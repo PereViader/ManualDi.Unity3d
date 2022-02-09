@@ -1,19 +1,21 @@
-﻿using ManualDi.Main;
+﻿using UnityEngine;
 
 namespace ManualDi.Unity3d.Examples.Example1
 {
-    public class Example1Context : BaseContext<Example1Facade, int>
+    public class Example1Context : MonoBehaviour
     {
-        public Example1Configuration configuration;
-        public Example1Facade facade;
+        private int number;
+        private Example1Configuration configuration;
 
-        public override void Install(IDiContainerBindings bindings)
+        public void Inject(int number, Example1Configuration configuration)
         {
-            bindings.Bind<Example1Facade>()
-                .FromInstance(facade)
-                .Initialize((o, c) => o.Init(Data, configuration));
+            this.number = number;
+            this.configuration = configuration;
+        }
 
-            bindings.QueueDispose(() => UnityEngine.Debug.Log("Dispose " + Data));
+        public void DoStuff()
+        {
+            Debug.LogFormat("{0} {1}", configuration.message, number);
         }
     }
 }

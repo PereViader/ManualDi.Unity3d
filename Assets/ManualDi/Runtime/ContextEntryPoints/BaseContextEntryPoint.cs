@@ -3,19 +3,19 @@ using UnityEngine;
 
 namespace ManualDi.Unity3d
 {
-    public abstract class BaseContext<TFacade, TData> : MonoBehaviour, IContext<TFacade, TData>, IInstaller
-        where TFacade : MonoBehaviour
+    public abstract class BaseContextEntryPoint<TData, TContext> : MonoBehaviour, IContextEntryPoint<TData, TContext>, IInstaller
+        where TContext : MonoBehaviour
     {
         private bool disposedValue;
 
         public IDiContainer Container { get; private set; }
 
-        public TFacade Facade { get; private set; }
+        public TContext Context { get; private set; }
         public TData Data { get; private set; }
 
         public GameObject GameObject => gameObject;
 
-        public TFacade Initiate(IDiContainer parentDiContainer, TData data)
+        public TContext Initiate(IDiContainer parentDiContainer, TData data)
         {
             disposedValue = false;
 
@@ -26,9 +26,9 @@ namespace ManualDi.Unity3d
                 .WithInstaller(this)
                 .Build();
 
-            Facade = Container.Resolve<TFacade>();
+            Context = Container.Resolve<TContext>();
 
-            return Facade;
+            return Context;
         }
 
         public virtual void OnDestroy()
@@ -53,7 +53,7 @@ namespace ManualDi.Unity3d
             Container = null;
 
             Data = default;
-            Facade = default;
+            Context = default;
         }
 
         public abstract void Install(IDiContainerBindings bindings);

@@ -5,14 +5,14 @@ namespace ManualDi.Unity3d.Tests.PlayMode
 {
     public static class UnityManualDiTest
     {
-        public static TestFacade Instantiate(TestData data = null, InstallDelegate installDelegate = null, IDiContainer parentDiContainer = null)
+        public static TestContext Instantiate(TestData data = null, InstallDelegate installDelegate = null, IDiContainer parentDiContainer = null)
         {
             var gameObjectPrefab = new GameObject();
-            var context = gameObjectPrefab.AddComponent<TestContext>();
+            var contextEntryPoint = gameObjectPrefab.AddComponent<TestContextEntryPoint>();
 
-            context.InstallDelegate = b =>
+            contextEntryPoint.InstallDelegate = b =>
             {
-                b.Bind<TestFacade>()
+                b.Bind<TestContext>()
                     .FromNewComponent(gameObjectPrefab)
                     .Initialize((o, c) =>
                     {
@@ -23,7 +23,7 @@ namespace ManualDi.Unity3d.Tests.PlayMode
                 installDelegate?.Invoke(b);
             };
 
-            return context.Initiate(parentDiContainer, data);
+            return contextEntryPoint.Initiate(parentDiContainer, data);
         }
     }
 }

@@ -14,13 +14,13 @@ namespace ManualDi.Unity3d.Tests.PlayMode
             var instance = new object();
 
             var data = new TestData();
-            var facade = UnityManualDiTest.Instantiate(data, b =>
+            var context = UnityManualDiTest.Instantiate(data, b =>
             {
                 b.Bind<object>().FromInstance(instance);
             });
 
-            Assert.That(facade.TestData, Is.EqualTo(data));
-            Assert.That(facade.DiContainer.Resolve<object>(), Is.EqualTo(instance));
+            Assert.That(context.TestData, Is.EqualTo(data));
+            Assert.That(context.DiContainer.Resolve<object>(), Is.EqualTo(instance));
         }
 
         [UnityTest]
@@ -28,12 +28,12 @@ namespace ManualDi.Unity3d.Tests.PlayMode
         {
             bool disposed = false;
 
-            var facade = UnityManualDiTest.Instantiate(installDelegate: b =>
+            var context = UnityManualDiTest.Instantiate(installDelegate: b =>
             {
                 b.QueueDispose(() => disposed = true);
             });
 
-            GameObject.Destroy(facade.gameObject);
+            GameObject.Destroy(context.gameObject);
 
             yield return null;
 
