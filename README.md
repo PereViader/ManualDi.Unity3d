@@ -59,7 +59,7 @@ The architecture can be thought of several systems that depend on other ones. If
 
 Imagine you want to instantiate a GameObject. Unity provides an easy way to accomplish this task.
 
-```
+```csharp
 class GameObjectContext : MonoBehaviour
 {
     void Speak() 
@@ -88,7 +88,7 @@ We could try to the components of the gameObject `GetComponent`, but we would be
 
 This however is not a problem, because we can do this.
 
-```
+```csharp
 class GameObjectContext : MonoBehaviour
 {
     void Speak() 
@@ -113,7 +113,7 @@ This can be considered an improvement over the previous solution because we know
 
 But what would happen if we needed to provide this GameObject with some data.
 
-```
+```csharp
 class Data
 {
     string Name { get; set; }
@@ -154,7 +154,7 @@ This is where ManualDi and this Unity3d integration will start to help (but ther
 
 ManualDi.Unity3d provides you with a MonoBehaviour base class `BaseContextEntryPoint<TData, TContext>`  you can use to define the context for GameObject system.
 
-```
+```csharp
 class Data
 {
     string Name { get; set; }
@@ -225,7 +225,7 @@ Just like with GameObjects, scenes will represent a part of your system. Each sc
 
 Let's first see how is a scene loaded in unity and an example of how to provide some data to it.
 
-```
+```csharp
 class Data
 {
     string Name { get; set; }
@@ -286,7 +286,7 @@ Having to get the scene manually after loading it is not ideal, but that is how 
 
 How does the ManualDi integration improve this.
 
-```
+```csharp
 class Data
 {
     string Name { get; set; }
@@ -327,7 +327,7 @@ class Example
         
         yield return SceneManager.LoadSceneAsync("TheScene", LoadSceneMode.Additive);
 
-        Scene scene = SceneManager.GetSceneByName("Example2Context");
+        Scene scene = SceneManager.GetSceneByName("TheScene");
 
         SceneContext context = SceneManualDi.Initiate<SceneContextEntryPoint, Data, SceneContext>(
                 scene,
