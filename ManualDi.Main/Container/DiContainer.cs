@@ -9,11 +9,13 @@ namespace ManualDi.Main
     {
         private readonly Dictionary<Type, List<TypeBinding>> allTypeBindings;
         private readonly IDiContainer? parentDiContainer;
+        private readonly BindingContext bindingContext = new();
         
         private BindingInitializer bindingInitializer;
         private DisposableActionQueue disposableActionQueue;
         private bool isResolving;
         private bool disposedValue;
+        private TypeBinding? injectedTypeBinding;
 
         public DiContainer(
             Dictionary<Type, List<TypeBinding>> allTypeBindings, 
@@ -43,9 +45,9 @@ namespace ManualDi.Main
             }
         }
 
-        public object? ResolveContainer(Type type, ResolutionConstraints? resolutionConstraints)
+        public object? ResolveContainer(Type type, FilterBindingDelegate? filterBindingDelegate)
         {
-            var typeBinding = GetTypeForConstraint(type, resolutionConstraints);
+            var typeBinding = GetTypeForConstraint(type, filterBindingDelegate);
             if (typeBinding is not null)
             {
                 return ResolveBinding(typeBinding);
@@ -53,7 +55,7 @@ namespace ManualDi.Main
 
             if (parentDiContainer is not null)
             {
-                return parentDiContainer.ResolveContainer(type, resolutionConstraints);
+                return parentDiContainer.ResolveContainer(type, filterBindingDelegate);
             }
 
             return null;
@@ -61,10 +63,14 @@ namespace ManualDi.Main
 
         private object ResolveBinding(TypeBinding typeBinding)
         {
+
             bool wasResolving = this.isResolving;
             isResolving = true;
 
+            var previousType = injectedTypeBinding;
+            injectedTypeBinding = typeBinding;
             var (instance, isNew) = typeBinding.Create(this);
+            injectedTypeBinding = previousType;
             if (!isNew)
             {
                 isResolving = wasResolving;
@@ -89,23 +95,43 @@ namespace ManualDi.Main
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private TypeBinding? GetTypeForConstraint(Type type, ResolutionConstraints? resolutionConstraints)
+        private TypeBinding? GetTypeForConstraint(Type type, FilterBindingDelegate? filterBindingDelegate)
         {
-            if (!allTypeBindings.TryGetValue(type, out var bindings))
+            if (!allTypeBindings.TryGetValue(type, out var typeBindings))
             {
                 return null;
             }
 
-            if (resolutionConstraints is null)
+            var first = typeBindings[0];
+            if (filterBindingDelegate is null && first.FilterBindingDelegate is null)
             {
-                return bindings[0];
+                return first;
             }
 
-            foreach (var binding in bindings)
+            bindingContext.InjectedIntoTypeBinding = injectedTypeBinding;
+
+            if (filterBindingDelegate is null)
             {
-                if (resolutionConstraints.Accepts(binding))
+                foreach (var typeBinding in typeBindings)
                 {
-                    return binding;
+                    bindingContext.TypeBinding = typeBinding;
+
+                    if (typeBinding.FilterBindingDelegate?.Invoke(bindingContext) ?? true)
+                    {
+                        return typeBinding;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var typeBinding in typeBindings)
+                {
+                    bindingContext.TypeBinding = typeBinding;
+
+                    if (filterBindingDelegate.Invoke(bindingContext) && (typeBinding.FilterBindingDelegate?.Invoke(bindingContext) ?? true))
+                    {
+                        return typeBinding;
+                    }
                 }
             }
             
@@ -113,38 +139,32 @@ namespace ManualDi.Main
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ResolveAllContainer(Type type, ResolutionConstraints? resolutionConstraints, IList resolutions)
+        public void ResolveAllContainer(Type type, FilterBindingDelegate? filterBindingDelegate, IList resolutions)
         {
-            AddResolveAllInstances(type, resolutionConstraints, resolutions);
+            AddResolveAllInstances(type, filterBindingDelegate, resolutions);
 
-            parentDiContainer?.ResolveAllContainer(type, resolutionConstraints, resolutions);
+            parentDiContainer?.ResolveAllContainer(type, filterBindingDelegate, resolutions);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void AddResolveAllInstances(Type type, ResolutionConstraints? resolutionConstraints, IList resolutions)
+        private void AddResolveAllInstances(Type type, FilterBindingDelegate? filterBindingDelegate, IList resolutions)
         {
             if (!this.allTypeBindings.TryGetValue(type, out var typeBindings))
             {
                 return;
             }
-
-            if (resolutionConstraints is null)
+            
+            bindingContext.InjectedIntoTypeBinding = injectedTypeBinding;
+            
+            foreach (var typeBinding in typeBindings)
             {
-                foreach (var typeBinding in typeBindings)
+                bindingContext.TypeBinding = typeBinding;
+
+                if ((filterBindingDelegate?.Invoke(bindingContext) ?? true) && 
+                    (typeBinding.FilterBindingDelegate?.Invoke(bindingContext) ?? true))
                 {
                     var resolved = ResolveBinding(typeBinding);
                     resolutions.Add(resolved);
-                }
-            }
-            else
-            {
-                foreach (var typeBinding in typeBindings)
-                {
-                    if (resolutionConstraints.Accepts(typeBinding))
-                    {
-                        var resolved = ResolveBinding(typeBinding);
-                        resolutions.Add(resolved);
-                    }
                 }
             }
         }
