@@ -1,6 +1,6 @@
 {
     "name": "com.pereviader.manualdi.unity3d",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "displayName": "ManualDi",
     "description": "Fast C# dependency injection library that uses no reflexion",
     "unity": "2022.3",
