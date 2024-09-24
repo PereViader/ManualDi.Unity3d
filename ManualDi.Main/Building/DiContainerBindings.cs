@@ -7,7 +7,7 @@ namespace ManualDi.Main
     
     public sealed class DiContainerBindings
     {
-        private readonly Dictionary<Type, List<TypeBinding>> typeBindings;
+        private readonly Dictionary<IntPtr, TypeBinding> typeBindings;
         private readonly List<ContainerDelegate> injectDelegates;
         private readonly List<ContainerDelegate> initializationDelegates;
         private readonly List<ContainerDelegate> startupDelegates;
@@ -41,26 +41,36 @@ namespace ManualDi.Main
         
         public void AddBinding<TApparent, TConcrete>(TypeBinding<TApparent, TConcrete> typeBinding)
         {
-            var apparentType = typeof(TApparent);
-            if (!typeBindings.TryGetValue(apparentType, out var bindings))
+            var apparentType = typeof(TApparent).TypeHandle.Value;
+            if (!typeBindings.TryGetValue(apparentType, out var innerTypeBinding))
             {
-                bindings = new List<TypeBinding>(1);
-                typeBindings[apparentType] = bindings;
+                typeBindings.Add(apparentType, typeBinding);
+                return;
             }
 
-            bindings.Add(typeBinding);
+            while (innerTypeBinding.NextTypeBinding is not null)
+            {
+                innerTypeBinding = innerTypeBinding.NextTypeBinding;
+            }
+            
+            innerTypeBinding.NextTypeBinding = typeBinding;
         }
         
         public void AddUnsafeBinding(UnsafeTypeBinding typeBinding)
         {
-            var apparentType = typeBinding.ApparentType;
-            if (!typeBindings.TryGetValue(apparentType, out var bindings))
+            var apparentType = typeBinding.ApparentType.TypeHandle.Value;
+            if (!typeBindings.TryGetValue(apparentType, out var innerTypeBinding))
             {
-                bindings = new List<TypeBinding>(1);
-                typeBindings[apparentType] = bindings;
+                typeBindings.Add(apparentType, typeBinding);
+                return;
             }
 
-            bindings.Add(typeBinding);
+            while (innerTypeBinding.NextTypeBinding is not null)
+            {
+                innerTypeBinding = innerTypeBinding.NextTypeBinding;
+            }
+            
+            innerTypeBinding.NextTypeBinding = typeBinding;
         }
         
         public void QueueInjection(ContainerDelegate containerDelegate)
