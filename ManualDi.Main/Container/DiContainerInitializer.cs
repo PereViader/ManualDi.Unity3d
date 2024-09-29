@@ -22,6 +22,7 @@ namespace ManualDi.Main
         {
             Initializations = initializationsCount.HasValue ? new(initializationsCount.Value) : new();
             InitializationsOnDepth = initializationsOnDepthCount.HasValue ? new(initializationsOnDepthCount.Value) : new();
+            InitializationsOnDepth.Add(0);
             NestedCount = 0;
         }
     }
@@ -29,35 +30,18 @@ namespace ManualDi.Main
     internal static class DiContainerInitializerExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Queue(ref this DiContainerInitializer o, TypeBinding typeBinding, object instance)
+        public static void QueueInitialize(ref this DiContainerInitializer o, TypeBinding typeBinding, object instance)
         {
-            if (!typeBinding.NeedsInitialize())
-            {
-                if (o.NestedCount >= o.Initializations.Count)
-                {
-                    o.InitializationsOnDepth.Add(0);
-                }
-                return;
-            }
-        
-            if (o.NestedCount >= o.InitializationsOnDepth.Count)
-            {
-                o.InitializationsOnDepth.Add(1);
-            }
-            else
-            {
-                o.InitializationsOnDepth[o.NestedCount]++;
-            }
-
+            o.InitializationsOnDepth[o.NestedCount]++;
             o.Initializations.Add((typeBinding, instance));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InitializeCurrentLevelQueued(ref this DiContainerInitializer o, IDiContainer container)
         {
             o.NestedCount++;
+            o.InitializationsOnDepth.Add(0);
 
-            var levelIndex = o.InitializationsOnDepth.Count - 1;
+            var levelIndex = o.NestedCount - 1;
             var initializationCount = o.InitializationsOnDepth[levelIndex];
             var initializationStartIndex = o.Initializations.Count - initializationCount;
             
@@ -68,7 +52,15 @@ namespace ManualDi.Main
             }
             
             o.Initializations.RemoveRange(initializationStartIndex, initializationCount);
-            o.InitializationsOnDepth.RemoveAt(levelIndex);
+
+            if (levelIndex > 0)
+            {
+                o.InitializationsOnDepth.RemoveAt(levelIndex);
+            }
+            else
+            {
+                o.InitializationsOnDepth[levelIndex] = 0;
+            }
 
             o.NestedCount--;
         }   

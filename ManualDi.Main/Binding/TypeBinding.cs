@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace ManualDi.Main
 {
@@ -33,9 +32,8 @@ namespace ManualDi.Main
         internal TypeBinding? NextTypeBinding;
         
         public abstract object? CreateNew(IDiContainer container);
-        public abstract bool NeedsInitialize();
+        public abstract bool InjectObject(object instance, IDiContainer container);
         public abstract void InitializeObject(object instance, IDiContainer container);
-        public abstract void InjectObject(object instance, IDiContainer container);
     }
     
     public sealed class TypeBinding<TApparent, TConcrete> : TypeBinding
@@ -57,14 +55,10 @@ namespace ManualDi.Main
             return CreateConcreteDelegate.Invoke(container);
         }
 
-        public override void InjectObject(object instance, IDiContainer container)
+        public override bool InjectObject(object instance, IDiContainer container)
         {
             InjectionDelegates?.Invoke((TConcrete)instance, container);
-        }
-
-        public override bool NeedsInitialize()
-        {
-            return InitializationDelegate is not null;   
+            return InitializationDelegate is not null;
         }
         
         public override void InitializeObject(object instance, IDiContainer container)
@@ -94,14 +88,10 @@ namespace ManualDi.Main
             return CreateConcreteDelegate?.Invoke(container);
         }
 
-        public override void InjectObject(object instance, IDiContainer container)
+        public override bool InjectObject(object instance, IDiContainer container)
         {
             InjectionDelegates?.Invoke(instance, container);
-        }
-
-        public override bool NeedsInitialize()
-        {
-            return InitializationDelegate is not null;   
+            return InitializationDelegate is not null;
         }
         
         public override void InitializeObject(object instance, IDiContainer container)
