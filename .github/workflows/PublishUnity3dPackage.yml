@@ -6,9 +6,13 @@ on:
         type: string
         description: 'The tag of the release to download the file from'
         required: true
-      file-name:
+      sync-file-name:
         type: string
-        description: 'The name of the file to download within the release tag'
+        description: 'The name of the sync file to download within the release tag'
+        required: true
+      async-file-name:
+        type: string
+        description: 'The name of the async file to download within the release tag'
         required: true
         
 
@@ -27,16 +31,32 @@ jobs:
           
           # Download the release
           ENCODED_TAG=$(jq -rn --arg v "${{ github.event.inputs.release-tag }}" '$v|@uri')
-          ENCODED_NAME=$(jq -rn --arg v "${{ github.event.inputs.file-name }}" '$v|@uri')
-          PACKAGE_URL=$(echo "https://github.com/PereViader/ManualDi/releases/download/$ENCODED_TAG/$ENCODED_NAME")
-          echo "Downloading package at $PACKAGE_URL"
-          curl -L -o "${{ github.event.inputs.file-name }}" "$PACKAGE_URL"
           
-          # Extract the contents of the package into the root of the repo
-          tar -xzvf "${{ github.event.inputs.file-name }}"
-          mv package/* .
+          SYNC_ENCODED_NAME=$(jq -rn --arg v "${{ github.event.inputs.sync-file-name }}" '$v|@uri')
+          ASYNC_ENCODED_NAME=$(jq -rn --arg v "${{ github.event.inputs.async-file-name }}" '$v|@uri')
+          
+          SYNC_PACKAGE_URL=$(echo "https://github.com/PereViader/ManualDi/releases/download/$ENCODED_TAG/$SYNC_ENCODED_NAME")
+          ASYNC_PACKAGE_URL=$(echo "https://github.com/PereViader/ManualDi/releases/download/$ENCODED_TAG/$ASYNC_ENCODED_NAME")
+
+          echo "Downloading package at $SYNC_PACKAGE_URL"
+          curl -L -o "${{ github.event.inputs.sync-file-name }}" "$SYNC_PACKAGE_URL"
+          
+          echo "Downloading package at $ASYNC_PACKAGE_URL"
+          curl -L -o "${{ github.event.inputs.async-file-name }}" "$ASYNC_PACKAGE_URL"
+
+          echo "Extract the contents of the sync package"
+          mkdir ManualDi.Sync.Unity3d
+          tar -xzvf "${{ github.event.inputs.sync-file-name }}"
+          mv package/* ManualDi.Sync.Unity3d
           rm -rf package
-          rm "${{ github.event.inputs.file-name }}"
+          rm "${{ github.event.inputs.sync-file-name }}"
+
+          echo "Extract the contents of the async package"
+          mkdir ManualDi.Async.Unity3d
+          tar -xzvf "${{ github.event.inputs.async-file-name }}"
+          mv package/* ManualDi.Async.Unity3d
+          rm -rf package
+          rm "${{ github.event.inputs.async-file-name }}"
 
           # Upload contents to the repository
           git config user.name 'github-actions[bot]'
