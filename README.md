@@ -6,6 +6,8 @@ This repository is intended solely as a Unity3D Git target for the [Unity Packag
 
 The contents of this repository are automatically updated with each new release from the main repository.
 
+The contents are published on the tags.
+
 For comprehensive project details, please refer to the main repository 
 
 https://github.com/PereViader/ManualDi
