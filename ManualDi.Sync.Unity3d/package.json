@@ -1,7 +1,7 @@
 {
     "name": "com.pereviader.manualdi.sync.unity3d",
     "version": "0.0.0",
-    "displayName": "ManualDi",
+    "displayName": "ManualDi.Sync",
     "description": "Fast C# dependency injection library that uses no reflexion",
     "unity": "2022.3",
     "license": "MIT",
@@ -11,12 +11,5 @@
     "author": {
         "name": "Pere Viader",
         "url": "https://github.com/PereViader"
-    },
-    "samples": [
-        {
-            "displayName": "Samples",
-            "description": "Samples for ManualDi",
-            "path": "ManualDi.Unity3d/Samples~"
-        }
-    ]
+    }
 }
