@@ -1,6 +1,6 @@
 {
     "name": "com.pereviader.manualdi.async.unity3d",
-    "version": "0.0.0",
+    "version": "2.0.0",
     "displayName": "ManualDi.Async",
     "description": "Fast C# dependency injection library that uses no reflexion",
     "unity": "2022.3",
@@ -11,5 +11,12 @@
     "author": {
         "name": "Pere Viader",
         "url": "https://github.com/PereViader"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "Samples",
+            "description": "Samples for ManualDi",
+            "path": "ManualDi.Async.Unity3d/Samples~"
+        }
+    ]
 }
